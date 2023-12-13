@@ -3,15 +3,16 @@ import React from 'react'
 import { colorsFonts } from '../../constants/colorsfont'
 import { images } from '../../constants/images'
 
-const Profileheader = ({onClick}) => {
+const Profileheader = ({onClick,user}) => {
     return (
         <View>
             <View style={styles.container}>
                 <View style={{ flexDirection: 'row',alignItems:'center'}}>
                     <View style={styles.userView}>
+                    <Image source={{uri:user?.picture}} style={{height:50,width:50,borderRadius:50}} />
                     </View>
                     <View style={styles.itemsView}>
-                        <Text style={styles.userName}>Travolta</Text>
+                        <Text style={styles.userName}>{user?.username}</Text>
                         <View style={styles.curencyView}>
                             <Image source={images.country} style={styles.img} />
                             <Text style={[styles.userName, { fontSize: 14, marginLeft: 4 }]}>United-state</Text>
@@ -40,6 +41,8 @@ const styles = StyleSheet.create({
     userView: {
         height: 50,
         width: 50,
+        alignItems:'center',
+        justifyContent:'center',
         borderRadius: 50 / 2,
         backgroundColor: '#fff',
         elevation: 2

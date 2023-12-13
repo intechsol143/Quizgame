@@ -9,7 +9,6 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth'
 const Waiting = ({ navigation, route }) => {
   const { selectedItem, item } = route.params;
-  console.log("check Both Items", selectedItem, item)
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [oppositePair, setOppositePair] = useState();
@@ -62,6 +61,7 @@ const Waiting = ({ navigation, route }) => {
               queueRef.child(userKeys[0]).remove();
               queueRef.child(userKeys[1]).remove();
               fetchOtherUserDataAndNavigate(user1Id, user2Id);
+              
             } else {
               ToastAndroid.show('Some data is mismatched !', ToastAndroid.SHORT)
             }
@@ -130,6 +130,9 @@ useEffect(() => {
         console.error('Error updating item:', error.message);
       });
   };
+
+
+
 
   return (
     <ImageBackground source={images.waitngbg} style={selectcoinToplay.container}>

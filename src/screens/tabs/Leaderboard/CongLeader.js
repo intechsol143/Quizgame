@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ImageBackground, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/Feather'
 import Entypo from "react-native-vector-icons/Entypo"
@@ -6,11 +6,16 @@ import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsi
 import { selectcoinToplay } from '../tabsscreenStyles'
 import { colorsFonts } from '../../../constants/colorsfont'
 import { images } from '../../../constants/images'
-const CongLeader = () => {
+const CongLeader = ({ route }) => {
+  const { coins, position } = route?.params
   return (
     <ImageBackground source={images.emp} style={styles.winerBg}>
+      {/* <ScrollView> */}
       <View style={{ flex: 3 }}>
-        <ImageBackground resizeMode='cover' source={images.gliter} style={{ height: heightPercentageToDP(50), width: widthPercentageToDP(100) }}>
+        <ImageBackground resizeMode='cover' source={images.gliter} style={{
+          height: heightPercentageToDP(50),
+          width: widthPercentageToDP(100)
+        }}>
           <View style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -23,34 +28,38 @@ const CongLeader = () => {
           <View style={{ alignItems: 'center', marginTop: heightPercentageToDP(10) }}>
             <Text style={styles.rankTxt}>Your ranking position
               on the league leaderboard
-              is 1st position.</Text>
+              is {position == "First" ? "1st" : position == "Second" ? "2nd" : "3rd"} position.</Text>
           </View>
         </ImageBackground>
       </View>
-      <View style={{ flex: 2.2, 
-        paddingBottom:heightPercentageToDP(10),
+      <View style={{
+        height: heightPercentageToDP(45),
+        // paddingBottom:heightPercentageToDP(10),
         // backgroundColor: 'red',
-         alignItems: 'center' }}>
+        alignItems: 'center'
+      }}>
 
         <ImageBackground resizeMode='contain' source={images.leaderStar} style={{
-          height: 320,
+          height: heightPercentageToDP(40),
           alignItems: 'center',
           justifyContent: 'center',
           width: 320
         }}>
-          <View style={{ height: 250, width: 250, alignItems: 'center' }}>
+          <View style={{ height: heightPercentageToDP(40), width: 250, alignItems: 'center' }}>
             <View style={{ alignItems: 'center', paddingTop: 40 }}>
               <Image source={images.leadercoin} style={{ height: 90, width: 90 }} />
               <Text style={{
                 color: colorsFonts.goldencolor,
                 bottom: 10,
                 fontFamily: colorsFonts.SEMIBOLD, fontSize: 20
-              }}>10,000</Text>
+              }}>{coins}</Text>
             </View>
           </View>
         </ImageBackground>
 
       </View>
+      {/* </ScrollView> */}
+
       {/* <ImageBackground resizeMode='cover' source={images.gliter} style={{ height: heightPercentageToDP(50), width: widthPercentageToDP(100) }}>
         <View style={styles.subcontainer}>
           <View style={{ alignItems: 'center', paddingVertical: 20 }}>

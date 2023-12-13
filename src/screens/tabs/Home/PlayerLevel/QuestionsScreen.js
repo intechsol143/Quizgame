@@ -414,7 +414,7 @@ const QuestionsScreen = ({ navigation, route }) => {
         if (questionsList.length - 1 == saveIdx) {
             setQuizCompleted(true)
             updateProgress(userUid);
-            checkCompletion(winnerUID,userUid);
+            checkCompletion(winnerUID, userUid);
             updateNotificationProgress(userUid)
         } else {
             const currentQuestionIndex = currentQuestion;
@@ -449,7 +449,7 @@ const QuestionsScreen = ({ navigation, route }) => {
             }
         }
 
-  
+
 
     };
 
@@ -679,7 +679,7 @@ const QuestionsScreen = ({ navigation, route }) => {
     };
 
     // Function to check if both users have completed their questions
-    const checkCompletion = (user1Uid,user2Uid) => {
+    const checkCompletion = (user1Uid, user2Uid) => {
         const user1Ref = database().ref(`users/${user1Uid}/completedQuestion`);
         const user2Ref = database().ref(`users/${user2Uid}/completedQuestion`);
 
@@ -698,7 +698,11 @@ const QuestionsScreen = ({ navigation, route }) => {
         });
     };
 
+  
 
+
+
+    // Call the function to create the pair reference
 
 
 

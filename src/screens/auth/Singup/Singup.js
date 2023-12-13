@@ -67,11 +67,15 @@ const SignUp = ({ navigation }) => {
               picture: pictureURL,
               userId: user.uid,
               level: "",
-              coins: "",
+              coins:0,
               correctCount: 0,
               incorrectCount: 0,
               completedQuestion:false,
-              noti:false
+              noti:false,
+              rematch:false,
+              hideRematch:false,
+              isPaired:false,
+              signal:false
 
             };
             const userPath = `/users/${user.uid}`;

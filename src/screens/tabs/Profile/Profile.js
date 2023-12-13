@@ -1,17 +1,33 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { colorsFonts } from '../../../constants/colorsfont'
 import Profileheader from '../../../components/ProfileHeader/Profileheader'
 import { images } from '../../../constants/images'
 import LinearGradient from 'react-native-linear-gradient'
 import Header from '../../../components/AppTitleheader/Header'
+import database from '@react-native-firebase/database'
+import auth from '@react-native-firebase/auth'
+const Profile = ({ navigation }) => {
+  const [CurrentUser, setCurrentUser] = useState(null)
 
-const Profile = ({navigation}) => {
+
+  useEffect(() => {
+    const currentUserId = auth().currentUser.uid;
+    const usersRef = database().ref(`/users/${currentUserId}`);
+    const onDataChange = (snapshot) => {
+      const userData = snapshot.val();
+      setCurrentUser(userData);
+    };
+    usersRef.on('value', onDataChange);
+    return () => {
+      usersRef.off('value', onDataChange);
+    };
+  }, [CurrentUser]);
   return (
     <View style={styles.container}>
-      <Header title={"Profile"}/>
+      <Header title={"Profile"} />
       <View style={styles.subcontainer}>
-        <Profileheader onClick={()=>navigation.navigate("Editprofile")} />
+        <Profileheader user={CurrentUser} onClick={() => navigation.navigate("Editprofile")} />
         <View style={styles.reportcontainer}>
           <View style={styles.ranksContainer}>
             <View style={styles.centercontainer}>
@@ -54,21 +70,23 @@ const Profile = ({navigation}) => {
                 <View style={styles.endimgview}>
                   <View style={styles.square}>
                     <View style={styles.triangle}>
-                      <Image source={images.line} style={{height:120,width:99,resizeMode:'contain'}}/>
+                      <Image source={images.line} style={{ height: 120, width: 99, resizeMode: 'contain' }} />
                     </View>
-                    <View style={{alignItems:'center',
-                    justifyContent:'flex-end',
-                    flex:1}}>
-                    <Image source={images.ring} style={styles.ringImg} />
+                    <View style={{
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      flex: 1
+                    }}>
+                      <Image source={images.ring} style={styles.ringImg} />
                     </View>
-                
+
                   </View>
 
                 </View>
               </View>
             </View>
           </LinearGradient>
-          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={["#6A5AE0", '#F1EFFC']} style={[styles.linearView,{marginTop:20}]}>
+          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={["#6A5AE0", '#F1EFFC']} style={[styles.linearView, { marginTop: 20 }]}>
             <View>
               <View style={styles.clasicViewParent}>
                 <View style={styles.clasicView}>
@@ -93,14 +111,16 @@ const Profile = ({navigation}) => {
                 <View style={styles.endimgview}>
                   <View style={styles.square}>
                     <View style={styles.triangle}>
-                      <Image source={images.line} style={{height:120,width:99,resizeMode:'contain'}}/>
+                      <Image source={images.line} style={{ height: 120, width: 99, resizeMode: 'contain' }} />
                     </View>
-                    <View style={{alignItems:'center',
-                    justifyContent:'flex-end',
-                    flex:1}}>
-                    <Image source={images.drac} style={styles.ringImg} />
+                    <View style={{
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      flex: 1
+                    }}>
+                      <Image source={images.drac} style={styles.ringImg} />
                     </View>
-                
+
                   </View>
 
                 </View>
@@ -126,20 +146,21 @@ const styles = StyleSheet.create({
   },
   //rank view.....
 
-  ringImg:{ height: 70,
-    resizeMode:'contain',
-    width:80,
-    
-    },
-    endimgview:{
-      height: 120,
-      width: "38%",
-      borderTopRightRadius:20,
-    },
-    subView2:{
-      // backgroundColor: 'grey',
-      justifyContent: 'space-between', flexDirection: 'row'
-    },
+  ringImg: {
+    height: 70,
+    resizeMode: 'contain',
+    width: 80,
+
+  },
+  endimgview: {
+    height: 120,
+    width: "38%",
+    borderTopRightRadius: 20,
+  },
+  subView2: {
+    // backgroundColor: 'grey',
+    justifyContent: 'space-between', flexDirection: 'row'
+  },
   ranksContainer: {
     height: 70,
     borderWidth: .5,
@@ -148,7 +169,7 @@ const styles = StyleSheet.create({
     borderColor: colorsFonts.Primarycolor,
     width: '100%'
   },
-  clasicViewParent:{
+  clasicViewParent: {
     flexDirection: 'row', width: '100%'
   },
   days: {
@@ -156,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colorsFonts.Primarycolor
   },
-  clasicView:{
+  clasicView: {
     justifyContent: 'space-between', height: 120,
     width: '62%',
     paddingVertical: 16,
@@ -167,14 +188,14 @@ const styles = StyleSheet.create({
     fontFamily: colorsFonts.REGULAR,
     color: colorsFonts.Primarycolor,
     marginTop: 6,
-    textAlign:'center'
+    textAlign: 'center'
   },
   square: {
     width: 130, // Adjust the width of the square as needed
     height: 120, // Height is the same as the width for a square
-  //  backgroundColor: 'lightgray', // Background color of the square
+    //  backgroundColor: 'lightgray', // Background color of the square
     position: 'relative',
-    borderRadius:10
+    borderRadius: 10
   },
   triangle: {
     position: 'absolute',
@@ -186,7 +207,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0, // No left border
     borderRightWidth: 100, // Half of the square's width
     borderBottomWidth: 110, // Equal to the square's height
-  borderRightColor:'transparent',
+    borderRightColor: 'transparent',
     // borderRightColor: 'transparent',
     // borderRightColor: 'transparent',
     borderBottomColor: 'transparent', // Change the color as desired

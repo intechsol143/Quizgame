@@ -1,17 +1,52 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { colorsFonts } from '../../../constants/colorsfont'
 import { images } from '../../../constants/images'
 import LinearGradient from 'react-native-linear-gradient'
 import Header from '../../../components/AppTitleheader/Header'
 import Listview from '../../../components/Listview/Listview'
 import { heightPercentageToDP } from 'react-native-responsive-screen'
-
-const Leaderboard = ({navigation}) => {
+import database from "@react-native-firebase/database"
+const Leaderboard = ({ navigation }) => {
   const [state, setstate] = useState("1")
+
+  const [firstUser, setFirstUser] = useState(null);
+  const [middleUser, setMiddleUser] = useState(null);
+  const [lastUser, setLastUser] = useState(null);
   const _Button = (value) => {
     setstate(value)
   }
+
+
+
+  const getTopUsers = () => {
+    const usersRef = database().ref('users');
+    usersRef.orderByChild('user_game_level').limitToLast(3).once('value')
+      .then((snapshot) => {
+        const fetchedUsers = [];
+        snapshot.forEach((childSnapshot) => {
+          const userData = childSnapshot.val();
+          fetchedUsers.unshift(userData);
+        });
+        const sortedUsers = [...fetchedUsers];
+        sortedUsers.sort((a, b) => b.user_game_level - a.user_game_level);
+        const middleUser = sortedUsers[1];
+
+        setFirstUser(sortedUsers[0]);
+        setMiddleUser(middleUser);
+        setLastUser(sortedUsers[2]);
+      })
+      .catch((error) => {
+        console.error('Error getting top users:', error.message);
+      });
+  };
+
+  useEffect(() => {
+    getTopUsers(); // Call the function when the component mounts
+  }, []);
+
+
+
   return (
     <View style={styles.container}>
       <Header title={"Leaderboard"} />
@@ -40,51 +75,62 @@ const Leaderboard = ({navigation}) => {
           <View style={styles.imageRow}>
             <View style={{
               height: 250, width: '33%',
-              // backgroundColor:'red',
-              // alignItems: 'flex-start',
-              right:heightPercentageToDP(2),
+              right: heightPercentageToDP(2),
               justifyContent: 'flex-end'
             }}>
-              <View style={styles.userStyle}>
-                <Image source={images.player1} style={styles.image} />
+              {lastUser && <TouchableOpacity
+              onPress={() => navigation.navigate("CongLeader", {
+                coins: firstUser?.coins
+              })}
+              
+              style={styles.userStyle}>
+                <Image source={{ uri: lastUser?.picture }} style={styles.image} />
                 <Image source={images.coin} style={styles.coin} />
-                <Text style={styles.nameTxt}>Shehzad</Text>
+                <Text style={styles.nameTxt}>{lastUser?.username}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                   <Image source={images.coin} style={[styles.coin, { height: 10, width: 10, bottom: 0 }]} />
                   <Text style={[styles.nameTxt, { marginLeft: 4 }]}>300k</Text>
                 </View>
-              </View>
+              </TouchableOpacity>}
             </View>
             <View style={{ height: 250, width: '33%' }}>
-              <TouchableOpacity onPress={()=>navigation.navigate("CongLeader")} style={[styles.middleImage, { alignItems: 'center' }]}>
+              {firstUser && <TouchableOpacity onPress={() => navigation.navigate("CongLeader", {
+                position: "First",
+                coins: firstUser?.coins
+              })} style={[styles.middleImage, { alignItems: 'center' }]}>
                 <View>
-                <Image source={images.crown} style={{height:70,width:70,resizeMode:'contain'}} />
+                  <Image source={images.crown} style={{ height: 70, width: 70, resizeMode: 'contain' }} />
                 </View>
-                <Image source={images.player2} style={styles.middleimage} />
+                <Image source={{ uri: firstUser?.picture }} style={styles.middleimage} />
                 <Image source={images.coin} style={styles.coin} />
-                <Text style={styles.nameTxt}>Saad</Text>
+                <Text style={styles.nameTxt}>{firstUser?.username}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                   <Image source={images.coin} style={[styles.coin, { height: 10, width: 10, bottom: 0 }]} />
-                  <Text style={[styles.nameTxt, { marginLeft: 4 }]}>500k</Text>
+                  <Text style={[styles.nameTxt, { marginLeft: 4 }]}>{firstUser?.coins}k</Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity>}
+
+
             </View>
             <View style={{
               height: 250, width: '33%',
-              // backgroundColor: 'yellow',
               justifyContent: "flex-end",
-              left:heightPercentageToDP(2),
-              // alignItems: 'flex-end',
+              left: heightPercentageToDP(2),
             }}>
-              <View style={styles.userStyle}>
-                <Image source={images.player2} style={styles.image} />
+              {middleUser && <TouchableOpacity
+              onPress={() => navigation.navigate("CongLeader", {
+                position: "Second",
+                coins: middleUser?.coins
+              })}
+              style={styles.userStyle}>
+                <Image source={{ uri: middleUser?.picture }} style={styles.image} />
                 <Image source={images.coin} style={styles.coin} />
-                <Text style={styles.nameTxt}>Okasha</Text>
+                <Text style={styles.nameTxt}>{middleUser?.username}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                   <Image source={images.coin} style={[styles.coin, { height: 10, width: 10, bottom: 0 }]} />
-                  <Text style={[styles.nameTxt, { marginLeft: 4 }]}>400k</Text>
+                  <Text style={[styles.nameTxt, { marginLeft: 4 }]}>{middleUser?.coins}</Text>
                 </View>
-              </View>
+              </TouchableOpacity>}
             </View>
           </View>
           <View style={{ margin: 6 }}>
@@ -166,9 +212,10 @@ const styles = StyleSheet.create({
 
     justifyContent: 'space-between', borderBottomWidth: .5
   },
-  userStyle: { alignItems: 'center',
-  // backgroundColor:'red',
-},
+  userStyle: {
+    alignItems: 'center',
+    // backgroundColor:'red',
+  },
   selectorParent: {
     height: 40,
     borderRadius: 25,
@@ -209,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Arrange the images horizontally
     justifyContent: 'space-between', // Distribute space evenly
     marginBottom: 40, // Margin at the bottom of the row
-    marginTop:heightPercentageToDP(14),
+    marginTop: heightPercentageToDP(14),
     // backgroundColor: 'red',
     // paddingHorizontal: 12
   },

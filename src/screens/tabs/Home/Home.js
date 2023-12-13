@@ -47,7 +47,7 @@ const Home = ({ navigation }) => {
     return () => {
       usersRef.off('value', onDataChange);
     };
-  }, [currentUserId]);
+  }, [currentUserId,CurrentUser]);
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged((authUser) => {
       setUser(authUser);
@@ -62,7 +62,9 @@ const Home = ({ navigation }) => {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       handleUpdateData();
-      removeQueueReference()
+      removeQueueReference();
+      removePairReference();
+      removePlayAgainReference()
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
@@ -87,10 +89,35 @@ const Home = ({ navigation }) => {
       });
   };
 
+  const removePairReference = () => {
+    const queueRef = database().ref('pairings');
+
+    // Remove the 'queue' reference
+    queueRef.remove()
+      .then(() => {
+        console.log("Queue reference removed successfully");
+      })
+      .catch((error) => {
+        console.error("Error removing queue reference:", error);
+      });
+  };
+  const removePlayAgainReference = () => {
+    const queueRef = database().ref('playAgainSignal');
+
+    // Remove the 'queue' reference
+    queueRef.remove()
+      .then(() => {
+        console.log("Queue reference removed successfully");
+      })
+      .catch((error) => {
+        console.error("Error removing queue reference:", error);
+      });
+  };
+
   const handleUpdateData = () => {
     const userID = auth().currentUser.uid;
     const updatedData = {
-      coins: "",
+      // coins: "",
       level: "",
       in_game: false,
       status: 'offline',
@@ -99,7 +126,11 @@ const Home = ({ navigation }) => {
       refresh: 0,
       audience: 0,
       noti: false,
-      user_game_level: 0
+      rematch:false,
+      hideRematch:false,
+      isPaired:false,
+      // user_game_level:0
+
 
 
     };
