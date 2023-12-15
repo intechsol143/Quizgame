@@ -3,19 +3,19 @@ import React from 'react'
 import { colorsFonts } from '../../constants/colorsfont'
 import { images } from '../../constants/images'
 
-const Profileheader = ({onClick,user}) => {
+const Profileheader = ({ onClick, user }) => {
     return (
         <View>
             <View style={styles.container}>
-                <View style={{ flexDirection: 'row',alignItems:'center'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View style={styles.userView}>
-                    <Image source={{uri:user?.picture}} style={{height:50,width:50,borderRadius:50}} />
+                        <Image source={{ uri: user?.picture }} style={{ height: 50, width: 50, borderRadius: 50 }} />
                     </View>
                     <View style={styles.itemsView}>
                         <Text style={styles.userName}>{user?.username}</Text>
                         <View style={styles.curencyView}>
                             <Image source={images.country} style={styles.img} />
-                            <Text style={[styles.userName, { fontSize: 14, marginLeft: 4 }]}>United-state</Text>
+                            <Text style={[styles.userName, { fontSize: 14, marginLeft: 4 }]}>{user?.country}</Text>
                         </View>
                     </View>
                 </View>
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     userView: {
         height: 50,
         width: 50,
-        alignItems:'center',
-        justifyContent:'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 50 / 2,
         backgroundColor: '#fff',
         elevation: 2
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: 30,
-        backgroundColor:'rgba(190, 30, 45, 0.10)',
+        backgroundColor: 'rgba(190, 30, 45, 0.10)',
         width: 140,
         borderWidth: .5,
         borderColor: colorsFonts.Primarycolor,

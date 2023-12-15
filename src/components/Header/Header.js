@@ -15,7 +15,7 @@ const Header = ({navigation,user}) => {
                     <View style={{ paddingLeft: 10 }}>
                         <Text style={styles.nameText}>{user?.username}</Text>
                         <View style={styles.headersubParent2}>
-                            <Text style={styles.amountText}>28,000</Text>
+                            <Text style={styles.amountText}>{user?.amount}</Text>
                             <Image source={images.coin} style={styles.icon} />
                         </View>
                     </View>

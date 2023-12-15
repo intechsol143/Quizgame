@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, ScrollView, Image, ImageBackground, TouchableOpacity, TextInput, ToastAndroid } from 'react-native'
+import { StyleSheet, Text, View, FlatList, ScrollView, Image, ImageBackground, TouchableOpacity, TextInput, ToastAndroid, Alert } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { homestyle } from '../tabsscreenStyles'
 import Header from '../../../components/Header/Header'
@@ -47,7 +47,7 @@ const Home = ({ navigation }) => {
     return () => {
       usersRef.off('value', onDataChange);
     };
-  }, [currentUserId,CurrentUser]);
+  }, [currentUserId, CurrentUser]);
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged((authUser) => {
       setUser(authUser);
@@ -126,13 +126,9 @@ const Home = ({ navigation }) => {
       refresh: 0,
       audience: 0,
       noti: false,
-      rematch:false,
-      hideRematch:false,
-      isPaired:false,
-      // user_game_level:0
-
-
-
+      rematch: false,
+      hideRematch: false,
+      isPaired: false,
     };
     const userRef = database().ref(`/users/${userID}`);
     userRef.update(updatedData)
@@ -158,6 +154,11 @@ const Home = ({ navigation }) => {
 
 
 
+
+  const classicGame = () => {
+    navigation.navigate("PlayerLevel", { classic: "Classic" })
+
+  }
 
 
 
@@ -196,7 +197,7 @@ const Home = ({ navigation }) => {
               <Button
                 title={"Play"}
                 linear={true}
-                onPress={() => navigation.navigate("PlayerLevel")}
+                onPress={() => navigation.navigate("PlayerLevel",{classic:'new'})}
                 btnstyle={homestyle.playbutton}
               />
             </View>
@@ -222,6 +223,7 @@ const Home = ({ navigation }) => {
                 <Image source={images.crown} style={homestyle.crownicon} />
                 <Button title={"Play"}
                   linear={true}
+                  onPress={() => classicGame()}
                   btnstyle={homestyle.playbutton} />
               </View>
 

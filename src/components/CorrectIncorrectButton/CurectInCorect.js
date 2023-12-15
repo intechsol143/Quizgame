@@ -11,7 +11,8 @@ import messaging from '@react-native-firebase/messaging'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
 import Loader from '../Loader/Loader'
-const CurectInCorect = ({ navigation, opponentUserId, curentUser }) => {
+const CurectInCorect = ({ navigation, opponentUserId, curentUser, check }) => {
+    console.log("checkcheck", check)
 
     const height = Dimensions.get("screen").height
     const [loading, setloading] = useState(false)
@@ -20,55 +21,105 @@ const CurectInCorect = ({ navigation, opponentUserId, curentUser }) => {
     const [gameEnded, setGameEnded] = useState(true);
     const [userData, setuserData] = useState(null)
     const [winnerId, setwinnerId] = useState("")
+    const userID = auth().currentUser.uid;
 
 
     useEffect(() => {
-        const usersRef = database().ref(`/users/${opponentUserId}`);
-        const onDataChange = (snapshot) => {
-            const userData = snapshot.val();
-            setoponentUser(userData)
-        };
-        usersRef.on('value', onDataChange);
-        return () => {
-            usersRef.off('value', onDataChange);
-        };
-    }, [opponentUserId]);
+        const userIdFromArray = "kNBJgKTL7hWaGw2lO3PZQxPuR1XH";
+        const userRef = database().ref(`DummyUsers/${userIdFromArray}`);
+        console.log("Database Path:", `DummyUsers/${userIdFromArray}`);
+
+        userRef.once('value')
+            .then((snapshot) => {
+                const userData = snapshot.val();
+                console.log("User Data:", userData);
+                // Further operations with userData
+            })
+            .catch((error) => {
+                console.error('Error fetching user data:', error);
+            });
+    }, [])
+
+
+    // useEffect(() => {
+    //     if (check === "Classic") {
+    //         const userRef = database().ref(`DummyUsers/${opponentUserId}`);
+    //         userRef.once('value')
+    //             .then((snapshot) => {
+    //                 const userData = snapshot.val();
+    //                 console.log("userDat",userData)
+    //                 if (userData) {
+    //                     setoponentUser(userData)
+    //                     // Use the userData fetched from the database
+    //                     // console.log('User Data:', userData);
+    //                 } else {
+    //                     console.log('User not found');
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Error fetching user data:', error);
+    //             });
+    //     }
+
+    // }, [opponentUserId,check]);
 
 
     useEffect(() => {
-        if (curentUser && oponentUser) {
-            if (
-                curentUser.correctCount > oponentUser.correctCount &&
-                curentUser.completedQuestion &&
-                oponentUser.completedQuestion
-            ) {
-                setGameResult('Winner');
-                setwinnerId(curentUser?.userId)
+        if (check != "Classic") {
+            const usersRef = database().ref(`/users/${opponentUserId}`);
+            const onDataChange = (snapshot) => {
+                const userData = snapshot.val();
+                setoponentUser(userData)
+            };
+            usersRef.on('value', onDataChange);
+            return () => {
+                usersRef.off('value', onDataChange);
+            };
+        }
 
-            }
-            else if (
-                oponentUser.correctCount > curentUser.correctCount &&
-                curentUser.completedQuestion &&
-                oponentUser.completedQuestion
-            ) {
-                setGameResult('Loser');
-            }
-            else {
+    }, [opponentUserId, check]);
+
+
+    useEffect(() => {
+        if (check != "Classic") {
+            if (curentUser && oponentUser) {
+                if (
+                    curentUser.correctCount > oponentUser.correctCount &&
+                    curentUser.completedQuestion &&
+                    oponentUser.completedQuestion
+                ) {
+                    setGameResult('Winner');
+                    setwinnerId(curentUser?.userId)
+
+                }
+                else if (
+                    oponentUser.correctCount > curentUser.correctCount &&
+                    curentUser.completedQuestion &&
+                    oponentUser.completedQuestion
+                ) {
+                    setGameResult('Loser');
+                }
+                else {
+                    setGameResult('Waiting');
+                }
+            } else {
                 setGameResult('Waiting');
             }
-        } else {
-            setGameResult('Waiting');
         }
-    }, [curentUser, oponentUser]);
+
+    }, [curentUser, oponentUser, check]);
 
 
     useEffect(() => {
-        if (gameResult == "Winner") {
-            handleUpdateLevel(winnerId)
-            createPairReference(curentUser?.userId, opponentUserId)
+        if (check != "Classic") {
+            if (gameResult == "Winner") {
+                handleUpdateLevel(winnerId)
+                createPairReference(curentUser?.userId, opponentUserId)
+            }
         }
 
-    }, [gameResult])
+
+    }, [gameResult, check])
 
 
     const handleUpdateLevel = (winnerId) => {
@@ -204,17 +255,16 @@ const CurectInCorect = ({ navigation, opponentUserId, curentUser }) => {
             console.log("cehck Notidata", notificationData)
             if (curentUser.completedQuestion == true && oponentUser.completedQuestion && curentUser.noti && oponentUser.noti == true) {
                 // setGameEnded(true)
-                sendNotificationToOpponent(opponentFCMToken, notificationData,opponentUID);
+                sendNotificationToOpponent(opponentFCMToken, notificationData, opponentUID);
             } else {
                 ToastAndroid.show('Sorry your oponent has leave the game !', ToastAndroid.SHORT)
-
             }
 
         } catch (error) {
             console.error('Error notifying opponent:', error);
         }
     }
-    async function sendNotificationToOpponent(opponentFCMToken, notificationData,opponentUID) {
+    async function sendNotificationToOpponent(opponentFCMToken, notificationData, opponentUID) {
         setloading(true)
         try {
             const message = {
@@ -286,36 +336,36 @@ const CurectInCorect = ({ navigation, opponentUserId, curentUser }) => {
             // Remove the listener when component unmounts
             playAgainRef.off('value', handlePlayAgainSignal);
         };
-    }, [navigation]);
+    }, [navigation, userID]);
 
-    const handleUpdateData = () => {
-        const userID = auth().currentUser.uid;
+    const handleUpdateData = (userID, oponentId) => {
         const updatedData = {
-        //   coins: "",
-        //   level: "",
-        //   expert: 0,
-        //   fifty_fifty: 0,
-        //   refresh: 0,
-        //   audience: 0,
-          noti: false,
-          rematch:false,
-          hideRematch:false,
-          isPaired:false,
-          correctCount:0
-          // user_game_level:0
-    
-    
-    
+            noti: false,
+            rematch: false,
+            hideRematch: false,
+            isPaired: false,
+            correctCount: 0,
+            signal: false,
+            completedQuestion: false
         };
+
         const userRef = database().ref(`/users/${userID}`);
-        userRef.update(updatedData)
-          .then(() => {
-            console.log("data update successfuly!!")
-          })
-          .catch((error) => {
-            console.error('Error updating item:', error.message);
-          });
-      };
+        const otherUserRef = database().ref(`/users/${oponentId}`);
+
+        const updatePromises = [
+            userRef.update(updatedData),
+            otherUserRef.update(updatedData)
+        ];
+
+        Promise.all(updatePromises)
+            .then(() => {
+                console.log("Data updated successfully for both users!!");
+            })
+            .catch((error) => {
+                console.error('Error updating data:', error.message);
+            });
+    };
+
 
     const PlayAgain = () => {
         // Update Firebase Realtime Database to signal PlayAgain
@@ -327,8 +377,7 @@ const CurectInCorect = ({ navigation, opponentUserId, curentUser }) => {
 
         })
             .then(() => {
-                console.log("congrate!!!!")
-                handleUpdateData();
+                handleUpdateData(userID, opponentUserId);
                 // navigation.navigate('QuestionsScreen', { pair: "Welcom" });
 
                 // Continue with navigation to Question screen for Device A

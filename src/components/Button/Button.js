@@ -2,20 +2,21 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { colorsFonts } from '../../constants/colorsfont'
 import LinearGradient from 'react-native-linear-gradient';
-const Button = ({ title, Icon, titlesView, btnstyle, buttonTxt, onPress, linear }) => {
+const Button = ({ title, Icon, titlesView, btnstyle, buttonTxt, onPress, linear,disabled }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.linearGradient, { ...btnstyle }]}>
+    <TouchableOpacity disabled={disabled} onPress={onPress} style={[styles.linearGradient, { ...btnstyle }]}>
       {linear ? <LinearGradient
         colors={[colorsFonts.Primarycolor, '#00214E']}
         style={[styles.linearGradient, { ...btnstyle }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', ...titlesView }}>
-          {Icon}
+        {Icon}
+
           <Text style={styles.buttonText}>{title}</Text>
         </View>
       </LinearGradient> :
         <View style={{ flexDirection: 'row', alignItems: 'center', ...titlesView }}>
-          {Icon}
           <Text style={[styles.buttonText,{...buttonTxt}]}>{title}</Text>
+          {Icon}
         </View>
       }
     </TouchableOpacity>

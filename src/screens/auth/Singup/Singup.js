@@ -53,7 +53,6 @@ const SignUp = ({ navigation }) => {
         .createUserWithEmailAndPassword(data.email, data.phone)
         .then(async (userCredential) => {
           const user = userCredential.user;
-          // submitUserdata(user)
           const picturePath = `profile_pictures/${user.uid}.jpg`;
           const pictureRef = storage().ref(picturePath);
           try {
@@ -66,6 +65,7 @@ const SignUp = ({ navigation }) => {
               in_game: false,
               picture: pictureURL,
               userId: user.uid,
+              email:user.email,
               level: "",
               coins:0,
               correctCount: 0,
@@ -75,7 +75,8 @@ const SignUp = ({ navigation }) => {
               rematch:false,
               hideRematch:false,
               isPaired:false,
-              signal:false
+              signal:false,
+              amount:50
 
             };
             const userPath = `/users/${user.uid}`;

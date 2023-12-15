@@ -16,8 +16,8 @@ import messaging from '@react-native-firebase/messaging'
 import { widthPercentageToDP } from 'react-native-responsive-screen'
 
 const QuestionsScreen = ({ navigation, route }) => {
-    const { pair } = route.params;
-    // console.log("check Userss",user1,user2)
+    const { pair, classic } = route.params;
+    console.log("check Pair", pair)
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [correctCount, setCorrectCount] = useState(0);
     const [incorrectCount, setIncorrectCount] = useState(0);
@@ -556,6 +556,7 @@ const QuestionsScreen = ({ navigation, route }) => {
         return (
             <View>
                 <CurectInCorect
+                    check={classic}
                     opponentUserId={opponentUID}
                     curentUser={currentUser}
                     navigation={navigation}
@@ -622,7 +623,13 @@ const QuestionsScreen = ({ navigation, route }) => {
                                     <Button
                                         title={"Leave"}
                                         onPress={() => {
-                                            handlePlayerLeaveGame(currentPlayerUID, opponentUID)
+                                            if (classic == "Classic") {
+                                                setModalVisible(false)
+                                                navigation.navigate("Tabs")
+                                            } else {
+                                                handlePlayerLeaveGame(currentPlayerUID, opponentUID)
+                                            }
+
 
                                         }}
                                         linear={true}
@@ -698,7 +705,7 @@ const QuestionsScreen = ({ navigation, route }) => {
         });
     };
 
-  
+
 
 
 
